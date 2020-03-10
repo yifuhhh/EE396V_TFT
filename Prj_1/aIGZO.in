@@ -91,7 +91,7 @@ solve vgate=0 vstep=-0.1 vfinal=-5 name=gate
 log off
 load inf=tftexTransfer_0.str master
 solve prev
-log outf=tftexTransfer_Pos.log
+log outf=tftexTransfer_Pos.log csvfile=tftexTransfer_Pos.csv
 solve vstep=0.2 vfinal=20.0 name=gate
 #
 # And we compare the simulation with experimental data reported in
