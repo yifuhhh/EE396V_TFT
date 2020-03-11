@@ -1,11 +1,13 @@
 import numpy as np
 import pandas as pd
+import pylab
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
 def main():
 
-## Data processing for Project 1
+    ## Data processing for Project 1
     root = "/Users/yifuhhh/TFT_Projects/Prj_1"
     file_1 = "tftexTransfer_Neg.csv"
     file_2 = "tftexTransfer_Pos.csv"
@@ -18,7 +20,7 @@ def main():
     df = pd.read_csv(root + '/' + file_1)
     # print(df_1.columns.values.tolist())
     # print(df_1.head())
-    print(df.tail())
+    # print(df.tail())
     tmp = np.array(df)
     Vg = np.arange(152).reshape(152, 1)
     Vg.dtype = np.float
@@ -26,7 +28,7 @@ def main():
     Id.dtype = np.float
     Vg[0 : 50, 0] = tmp[50 : 0 : -1, 0]
     Id[0 : 50, 0] = tmp[50 : 0 : -1, 8]
-    Vg[50, 0] = 0
+    Vg[50, 0] = tmp[0, 0]
     Id[50, 0] = tmp[0, 8]
 
     df = pd.read_csv(root + '/' + file_2)
@@ -34,9 +36,13 @@ def main():
     Vg[51 : 151, 0] = tmp[0 : 100, 0]
     Id[51 : 151, 0] = tmp[0 : 100, 8]
 
-    print(Vg)
-
-    plt.plot (Vg[0 : 151, 0], Id[0 : 151, 0], color = 'orangered', linewidth = 2)
+    # print(Vg[100 : 151, 0])
+    parameter = np.polyfit(Vg[100 : 151, 0], Id[100 : 151, 0], 1)
+    f = np.poly1d(parameter)
+    print(parameter)
+    plt.plot (Vg[0 : 151, 0], Id[0 : 151, 0], color = 'royalblue', linewidth = 2)
+    plt.plot(Vg[61 : 151, 0], f(Vg[61 : 151, 0]), "r--", linewidth = 1.5)
+    # plt.yscale('log')
     ax = plt.gca()
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
     plt.title('Transfer curve', fontdict={'family':'Times New Roman', 'size':16})
@@ -44,7 +50,7 @@ def main():
     plt.ylabel('Id (A)', fontdict={'family':'Times New Roman', 'size': 16})
     plt.yticks(fontproperties = 'Times New Roman', size = 14)
     plt.xticks(fontproperties = 'Times New Roman', size = 14)
-    plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_1/Plots/Fig1.png')
+    plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_1/Plots/Fig3.png')
     plt.show()
 
 
