@@ -110,6 +110,8 @@ def plot_Q2(root, files_IdVd):
         plt.plot(data[0 : 5, 21], f(data[0 : 5, 21]), linewidth = 1.5, label = "Vgs = " + str(i) + "V")
         i = i + 1
     print(p[:, 0])
+    ax = plt.gca()
+    ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
     plt.title('Output conductance', fontdict={'family':'Times New Roman', 'size':16})
     plt.xlabel('Vds (V)', fontdict={'family':'Times New Roman', 'size':16})
     plt.ylabel('Id (A)', fontdict={'family':'Times New Roman', 'size': 16})
@@ -131,6 +133,8 @@ def plot_Q2(root, files_IdVd):
         u_eff[i, 0] = i
         i = i + 1
     plt.plot(u_eff[3:, 0], u_eff[3:, 1], linewidth = 1.5, label = "Mobility")
+    ax = plt.gca()
+    ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
     plt.title('Mobility', fontdict={'family':'Times New Roman', 'size':16})
     plt.xlabel('Vgs (V)', fontdict={'family':'Times New Roman', 'size':16})
     plt.ylabel('Mobility (m^2/(V*s))', fontdict={'family':'Times New Roman', 'size': 16})
