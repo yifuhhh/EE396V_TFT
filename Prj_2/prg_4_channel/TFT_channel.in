@@ -1,0 +1,106 @@
+loop steps=3
+assign name=index print n.value = 1 delta = 1
+assign name=infF print n.value=(15,30,60)
+
+####################################
+### TRANSFER CURVE OF a-IGZO TFT ###
+####################################
+
+go atlas 
+
+### Set up Mesh and Geometry
+# ".str" files are structural files and map (for one operation point)
+# all the unknowns of your device.
+mesh width=180 outf=tftex10_1.str master.out
+
+x.m l=0 s=0.25
+x.m l=10+${infF} s=0.25
+y.m l=0 s=0.0005
+y.m l=0.02 s=0.0005
+y.m l=0.12 s=0.005
+
+# The device is composed of a 20 nm layer of IGZO deposited
+# 100 nm oxide on a n++ substrate that acts as the gate.
+#
+region num=1 material=igzo y.min=0    y.max=0.02
+region num=2 material=sio2 y.min=0.02 y.max=0.12
+
+### Define Boundary Conditions
+#
+elec num=1 name=gate bottom
+elec num=2 name=source y.max=0.0 x.min=0.0  x.max=5.0
+elec num=3 name=drain  y.max=0.0 x.min=5.0+${infF} x.max=10.0+${infF}
+#
+# We define the gate as N.POLY.  This pins the gate workfunction
+# to the conduction band edge of silicon.
+#
+contact num=1 n.poly
+#
+# We also define a workfunction for the source and drain t
+# is very close to the conduction edge.  In the reference the
+# authors observed that without a workfunction the results for
+# ohmic boundaries were not significantly different than the
+# Schottky model.
+#
+contact num=2 workf=4.33
+contact num=3 workf=4.33
+
+
+
+### Define Material Parameters and Models
+#
+models fermi
+#
+# Key to the characterization of amorphous materials is the
+# definition of the states within the band gap.
+#
+defects nta=1.55e21 ntd=1.55e21 wta=0.013 wtd=0.12 \
+	nga=0.0 ngd=6.5e16 egd=2.9 wgd=0.1 \
+	sigtae=1e-15 sigtah=1e-15 sigtde=1e-15 sigtdh=1e-15 \
+	siggae=1e-15 siggah=1e-15 siggde=1e-15 siggdh=1e-15 \
+	dfile=bulk_don.dat afile=bulk_acc.dat numa=128 numd=64
+
+intdefect s.i intmaterial="igzo/sio2" continuous afile=int.dat numa=24 numd=24  \
+  nta=2e12 ntd=2.25e16 wta=0.19 wtd=0.1 \
+  nga=0 ngd=0 ega=0.62 egd=0.78 wga=0.15 wgd=0.15 \
+  sigtae=1.e-14 sigtah=1.e-14 sigtde=1.e-14 sigtdh=1.e-14 \  
+  siggae=1.e-14 siggah=1.e-14 siggde=1.e-14 siggdh=1.e-14  
+
+# Solve for Transfer Curve (Id-Vg)
+#
+solve init
+solve prev
+solve vdrain=0.1
+save outf=tftexTransfer_0_${index}.str
+log outf=tftexTransfer_Neg_${index}.log csvfile=tftexTransfer_Neg_${index}.csv
+solve vgate=0 vstep=-0.1 vfinal=-5 name=gate
+log off
+
+load inf=tftexTransfer_0_${index}.str master
+solve prev
+log outf=tftexTransfer_Pos_${index}.log csvfile=tftexTransfer_Pos_${index}.csv
+solve vstep=0.2 vfinal=20.0 name=gate
+log off
+
+l.end
+
+ttonyplot -overlay tftexTransfer_Neg_1.log tftexTransfer_Pos_1.log tftexTransfer_Neg_2.log tftexTransfer_Pos_2.log tftexTransfer_Neg_3.log tftexTransfer_Pos_3.log
+tonyplot -overlay int.dat
+
+extract init infile="tftexTransfer_Pos_1.log"
+extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0) 
+extract init infile="tftexTransfer_Neg_1.log"
+extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
+
+extract init infile="tftexTransfer_Pos_2.log"
+extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0)
+extract init infile="tftexTransfer_Neg_2.log"
+extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
+
+extract init infile="tftexTransfer_Pos_3.log"
+extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0)
+extract init infile="tftexTransfer_Neg_3.log"
+extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
+
+
+quit
