@@ -41,25 +41,43 @@ def main():
 
 def plot_transfer(root, transferNeg, transferPos, name):
 
-    print(transferNeg)
-    print(root)
+    # print(transferNeg)
+    # print(root)
     sweep_label = ['0', '0', '0']
+    Vth = np.zeros((1, 3), dtype = np.float)
+    sweep = np.zeros((1, 3), dtype = np.float)
     if name == "interface":
         sweep_label[0] = "nta = 0.5e12"
         sweep_label[1] = "nta = 2e12"
         sweep_label[2] = "nta = 8e12"
+        sweep[0, 0] = 0.5e12
+        sweep[0, 1] = 2e12
+        sweep[0, 2] = 8e12
+        sweep_name = "nta"
     elif name == "bulkshallow":
         sweep_label[0] = "nta & ntd= 0.5e21"
         sweep_label[1] = "nta & ntd= 2e21"
         sweep_label[2] = "nta & ntd= 8e21"
+        sweep[0, 0] = 0.5e21
+        sweep[0, 1] = 2e21
+        sweep[0, 2] = 8e21
+        sweep_name = "nta & ntd"
     elif name == "bulkdeep":
         sweep_label[0] = "ngd = 0.5e16"
         sweep_label[1] = "ngd = 2e16"
         sweep_label[2] = "ngd = 8e16"
+        sweep[0, 0] = 0.5e16
+        sweep[0, 1] = 2e16
+        sweep[0, 2] = 8e16
+        sweep_name = "ngd"
     else:
         sweep_label[0] = "Channel length = 15 um"
         sweep_label[1] = "Channel length = 30 um"
         sweep_label[2] = "Channel length = 60 um"
+        sweep[0, 0] = 15
+        sweep[0, 1] = 30
+        sweep[0, 2] = 60
+        sweep_name = "Channel length"
 
     Vg = np.zeros((160, 3), dtype = np.float)
     Id = np.zeros((160, 3), dtype = np.float)
@@ -83,21 +101,23 @@ def plot_transfer(root, transferNeg, transferPos, name):
         tmp = np.array(tmp)
         Vg[60 :, num - 1] = tmp[:, 0]
         Id[60 :, num - 1] = tmp[:, 8]
-        parameter = np.polyfit(Vg[110 :, num - 1], Id[110 :, num - 1], 1)
+        parameter = np.polyfit(Vg[100 :, num - 1], Id[100 :, num - 1], 1)
         f = np.poly1d(parameter)
-        print(f)
+        Vth[0, num - 1] = f.r
+        # print(f)
 
-    print(Vg)
+    # print(Vth)
 
     plt.figure(1, figsize = (10, 8))
     i = 0
     while i < 3:
         r = row[0, i]
         plt.plot (Vg[60 - r :, i], Id[60 - r :, i], linewidth = 2, label = sweep_label[i])
+        # plt.plot(Vg[61 :, 0], f(Vg[61 :, 0]), "r--", linewidth = 1.5)
         i = i + 1
     ax = plt.gca()
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
-    plt.title('Transfer curve for sweep of' + name, fontdict={'family':'Times New Roman', 'size':16})
+    plt.title('Transfer curve for sweep of ' + name, fontdict={'family':'Times New Roman', 'size':16})
     plt.xlabel('Vgs (V)', fontdict={'family':'Times New Roman', 'size':16})
     plt.ylabel('Id (A)', fontdict={'family':'Times New Roman', 'size': 16})
     plt.yticks(fontproperties = 'Times New Roman', size = 14)
@@ -115,13 +135,28 @@ def plot_transfer(root, transferNeg, transferPos, name):
     ax = plt.gca()
     ax.yaxis.get_major_formatter().set_powerlimits((0, 10))
     ax.set_yscale("log")
-    plt.title('Transfer curve for sweep of' + name, fontdict={'family':'Times New Roman', 'size':16})
+    plt.title('Transfer curve for sweep of ' + name, fontdict={'family':'Times New Roman', 'size':16})
     plt.xlabel('Vgs (V)', fontdict={'family':'Times New Roman', 'size':16})
     plt.ylabel('Id (A)', fontdict={'family':'Times New Roman', 'size': 16})
-    plt.yticks(fontproperties = 'Times New Roman', size = 12)
-    plt.xticks(fontproperties = 'Times New Roman', size = 12)
+    plt.yticks(fontproperties = 'Times New Roman', size = 14)
+    plt.xticks(fontproperties = 'Times New Roman', size = 14)
     plt.legend(loc = 2, prop={'family':'Times New Roman', 'size':12})
     plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_2/Plots/' + 'Fig2_' + name + '.png')
+    plt.show()
+
+    plt.figure(3, figsize = (10, 8))
+
+    plt.plot (sweep[0, :], Vth[0, :], linewidth = 2)
+    ax = plt.gca()
+    ax.yaxis.get_major_formatter().set_powerlimits((0, 10))
+    ax.set_xscale("log")
+    plt.title('Threshold voltage for sweep of ' + name, fontdict={'family':'Times New Roman', 'size':16})
+    plt.xlabel(sweep_name, fontdict={'family':'Times New Roman', 'size':16})
+    plt.ylabel('Vth (V)', fontdict={'family':'Times New Roman', 'size': 16})
+    plt.yticks(fontproperties = 'Times New Roman', size = 14)
+    plt.xticks(fontproperties = 'Times New Roman', size = 14)
+    # plt.legend(loc = 2, prop={'family':'Times New Roman', 'size':12})
+    plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_2/Plots/' + 'Fig3_' + name + '.png')
     plt.show()
 
 
