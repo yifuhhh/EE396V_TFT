@@ -59,7 +59,7 @@ defects nta=1.55e21 ntd=1.55e21 wta=0.013 wtd=0.12 \
 	siggae=1e-15 siggah=1e-15 siggde=1e-15 siggdh=1e-15 \
 	dfile=bulk_don_${index}.dat afile=bulk_acc_${index}.dat numa=128 numd=64
 
-intdefect s.i intmaterial="igzo/sio2" continuous afile=int_${index}.dat numa=24 numd=24  \
+intdefect s.i intmaterial="igzo/sio2" continuous afile=int_acc_${index}.dat dfile=int_don_${index}.dat numa=24 numd=24  \
   nta=${infF} ntd=2.25e16 wta=0.19 wtd=0.1 \
   nga=0 ngd=0 ega=0.62 egd=0.78 wga=0.15 wgd=0.15 \
   sigtae=1.e-14 sigtah=1.e-14 sigtde=1.e-14 sigtdh=1.e-14 \  
@@ -86,7 +86,7 @@ l.end
 
 tonyplot -overlay tftexTransfer_Neg_1.log tftexTransfer_Pos_1.log tftexTransfer_Neg_2.log tftexTransfer_Pos_2.log tftexTransfer_Neg_3.log tftexTransfer_Pos_3.log tftexTransfer_Neg_4.log tftexTransfer_Pos_4.log tftexTransfer_Neg_5.log tftexTransfer_Pos_5.log
 
-tonyplot -overlay int_1.dat int_2.dat int_3.dat int_4.dat int_5.dat 
+tonyplot -overlay int_acc_1.dat int_acc_2.dat int_acc_3.dat int_acc_4.dat int_acc_5.dat int_don_1.dat int_don_2.dat int_don_3.dat int_don_4.dat int_don_5.dat 
 
 extract init infile="tftexTransfer_Pos_1.log"
 extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0) 
