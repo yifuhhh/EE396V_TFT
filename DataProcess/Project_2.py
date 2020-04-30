@@ -37,11 +37,11 @@ def main():
     transferPos_4 = list(filter(lambda x: x[14 : 17]=='Pos', files_4))
 
     # plot_trap_1(root_1, trap_int, name_1)
-    plot_trap_2(root_2, trap_bulk_acc, trap_bulk_don, name_2)
+    # plot_trap_2(root_2, trap_bulk_acc, trap_bulk_don, name_2)
     # plot_trap_3(root_3, trap_bulk, trap_bulk_don, name_3)
 
     # plot_transfer(root_1, transferNeg_1, transferPos_1, name_1)
-    # plot_transfer(root_2, transferNeg_2, transferPos_2, name_2)
+    plot_transfer(root_2, transferNeg_2, transferPos_2, name_2)
     # plot_transfer(root_3, transferNeg_3, transferPos_3, name_3)
     # plot_transfer(root_4, transferNeg_4, transferPos_4, name_4)
 
@@ -121,8 +121,8 @@ def plot_transfer(root, transferNeg, transferPos, name):
     # print(transferNeg)
     # print(root)
     sweep_label = ['0', '0', '0']
-    Vth = np.zeros((1, 3), dtype = np.float)
     sweep = np.zeros((1, 3), dtype = np.float)
+    Vth = np.zeros((1, 3), dtype = np.float)
     if name == "interface":
         sweep_label[0] = "nta = 0.5e12"
         sweep_label[1] = "nta = 2e12"
@@ -130,6 +130,9 @@ def plot_transfer(root, transferNeg, transferPos, name):
         sweep[0, 0] = 0.5e12
         sweep[0, 1] = 2e12
         sweep[0, 2] = 8e12
+        Vth[0, 0] = 9.6749
+        Vth[0, 1] = 10.0399
+        Vth[0, 2] = 10.8379
         sweep_name = "nta"
     elif name == "bulkshallow":
         sweep_label[0] = "nta & ntd= 0.5e21"
@@ -138,6 +141,9 @@ def plot_transfer(root, transferNeg, transferPos, name):
         sweep[0, 0] = 0.5e21
         sweep[0, 1] = 2e21
         sweep[0, 2] = 8e21
+        Vth[0, 0] = 7.34496
+        Vth[0, 1] = 10.1087
+        Vth[0, 2] = 6.91284
         sweep_name = "nta & ntd"
     elif name == "bulkdeep":
         sweep_label[0] = "ngd = 0.5e16"
@@ -146,6 +152,9 @@ def plot_transfer(root, transferNeg, transferPos, name):
         sweep[0, 0] = 0.5e16
         sweep[0, 1] = 2e16
         sweep[0, 2] = 8e16
+        Vth[0, 0] = 10.1007
+        Vth[0, 1] = 10.0853
+        Vth[0, 2] = 10.025
         sweep_name = "ngd"
     else:
         sweep_label[0] = "Channel length = 15 um"
@@ -154,6 +163,9 @@ def plot_transfer(root, transferNeg, transferPos, name):
         sweep[0, 0] = 15
         sweep[0, 1] = 30
         sweep[0, 2] = 60
+        Vth[0, 0] = 10.0271
+        Vth[0, 1] = 10.0399
+        Vth[0, 2] = 10.0463
         sweep_name = "Channel length"
 
     Vg = np.zeros((160, 3), dtype = np.float)
@@ -178,12 +190,6 @@ def plot_transfer(root, transferNeg, transferPos, name):
         tmp = np.array(tmp)
         Vg[60 :, num - 1] = tmp[:, 0]
         Id[60 :, num - 1] = tmp[:, 8]
-        parameter = np.polyfit(Vg[100 :, num - 1], Id[100 :, num - 1], 1)
-        f = np.poly1d(parameter)
-        Vth[0, num - 1] = f.r
-        # print(f)
-
-    # print(Vth)
 
     plt.figure(1, figsize = (10, 8))
     i = 0
@@ -222,7 +228,6 @@ def plot_transfer(root, transferNeg, transferPos, name):
     plt.show()
 
     plt.figure(3, figsize = (10, 8))
-
     plt.plot (sweep[0, :], Vth[0, :], linewidth = 2)
     ax = plt.gca()
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
