@@ -1,6 +1,6 @@
-loop steps=5
+loop steps=3
 assign name=index print n.value = 1 delta = 1
-assign name=infF print n.value=(0.5e21,1e21,2e21,4e21,8e21)
+assign name=infF print n.value=(0.5e21,2e21,8e21)
 
 ####################################
 ### TRANSFER CURVE OF a-IGZO TFT ###
@@ -84,9 +84,9 @@ log off
 
 l.end
 
-tonyplot -overlay tftexTransfer_Neg_1.log tftexTransfer_Pos_1.log tftexTransfer_Neg_2.log tftexTransfer_Pos_2.log tftexTransfer_Neg_3.log tftexTransfer_Pos_3.log tftexTransfer_Neg_4.log tftexTransfer_Pos_4.log tftexTransfer_Neg_5.log tftexTransfer_Pos_5.log
+tonyplot -overlay tftexTransfer_Neg_1.log tftexTransfer_Pos_1.log tftexTransfer_Neg_2.log tftexTransfer_Pos_2.log tftexTransfer_Neg_3.log tftexTransfer_Pos_3.log
 
-tonyplot -overlay int_1.dat int_2.dat int_3.dat int_4.dat int_5.dat 
+tonyplot -overlay int_1.dat int_2.dat int_3.dat 
 
 extract init infile="tftexTransfer_Pos_1.log"
 extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0) 
@@ -101,16 +101,6 @@ extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),
 extract init infile="tftexTransfer_Pos_3.log"
 extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0)
 extract init infile="tftexTransfer_Neg_3.log"
-extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
-
-extract init infile="tftexTransfer_Pos_4.log"
-extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0)
-extract init infile="tftexTransfer_Neg_4.log"
-extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
-
-extract init infile="tftexTransfer_Pos_5.log"
-extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0)
-extract init infile="tftexTransfer_Neg_5.log"
 extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
 
 quit
