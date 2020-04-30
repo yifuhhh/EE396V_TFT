@@ -72,7 +72,7 @@ def plot_trap_1(root, files, name):
     plt.ylabel('Trap density (cm^-3)', fontdict={'family':'Times New Roman', 'size': 16})
     plt.yticks(fontproperties = 'Times New Roman', size = 14)
     plt.xticks(fontproperties = 'Times New Roman', size = 14)
-    plt.legend(loc = 2, prop={'family':'Times New Roman', 'size':12})
+    plt.legend(loc = 1, prop={'family':'Times New Roman', 'size':12})
     plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_2/Plots/' + 'Fig0_' + name + '.png')
     plt.show()
 
