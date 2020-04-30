@@ -60,7 +60,7 @@ def plot_trap_1(root, files, name):
         i = 0
         while i < s:
             pos[i, num - 1] = float(tmp[i][0][4 : 16])
-            trap[i, num - 1] = float(tmp[i][0][18 : 30])
+            trap[i, num - 1] = float(tmp[i][0][46 : 48])
             i = i + 1
 
     plt.figure(5, figsize = (10, 8))
