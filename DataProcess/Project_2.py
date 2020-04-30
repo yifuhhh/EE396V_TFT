@@ -40,10 +40,10 @@ def main():
     # plot_trap_2(root_2, trap_bulk_acc, trap_bulk_don, name_2)
     # plot_trap_3(root_3, trap_bulk, trap_bulk_don, name_3)
 
-    # plot_transfer(root_1, transferNeg_1, transferPos_1, name_1)
+    plot_transfer(root_1, transferNeg_1, transferPos_1, name_1)
     plot_transfer(root_2, transferNeg_2, transferPos_2, name_2)
-    # plot_transfer(root_3, transferNeg_3, transferPos_3, name_3)
-    # plot_transfer(root_4, transferNeg_4, transferPos_4, name_4)
+    plot_transfer(root_3, transferNeg_3, transferPos_3, name_3)
+    plot_transfer(root_4, transferNeg_4, transferPos_4, name_4)
 
 
 def plot_trap_1(root, files, name):
@@ -72,7 +72,7 @@ def plot_trap_1(root, files, name):
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
     ax.set_yscale("log")
     plt.title('Trap density for sweep of ' + name, fontdict={'family':'Times New Roman', 'size':16})
-    plt.xlabel('Position (um)', fontdict={'family':'Times New Roman', 'size':16})
+    plt.xlabel('State energy (eV)', fontdict={'family':'Times New Roman', 'size':16})
     plt.ylabel('Trap density (cm^-3)', fontdict={'family':'Times New Roman', 'size': 16})
     plt.yticks(fontproperties = 'Times New Roman', size = 14)
     plt.xticks(fontproperties = 'Times New Roman', size = 14)
@@ -123,6 +123,7 @@ def plot_transfer(root, transferNeg, transferPos, name):
     sweep_label = ['0', '0', '0']
     sweep = np.zeros((1, 3), dtype = np.float)
     Vth = np.zeros((1, 3), dtype = np.float)
+    ss = np.zeros((1, 3), dtype = np.float)
     if name == "interface":
         sweep_label[0] = "nta = 0.5e12"
         sweep_label[1] = "nta = 2e12"
@@ -133,6 +134,9 @@ def plot_transfer(root, transferNeg, transferPos, name):
         Vth[0, 0] = 9.6749
         Vth[0, 1] = 10.0399
         Vth[0, 2] = 10.8379
+        ss[0, 0] = -0.0632903
+        ss[0, 1] = -0.0674847
+        ss[0, 2] = -0.132793
         sweep_name = "nta"
     elif name == "bulkshallow":
         sweep_label[0] = "nta & ntd= 0.5e21"
@@ -144,6 +148,9 @@ def plot_transfer(root, transferNeg, transferPos, name):
         Vth[0, 0] = 7.34496
         Vth[0, 1] = 10.1087
         Vth[0, 2] = 6.91284
+        ss[0, 0] = -0.0791958
+        ss[0, 1] = -0.078234
+        ss[0, 2] = -0.078953
         sweep_name = "nta & ntd"
     elif name == "bulkdeep":
         sweep_label[0] = "ngd = 0.5e16"
@@ -155,6 +162,9 @@ def plot_transfer(root, transferNeg, transferPos, name):
         Vth[0, 0] = 10.1007
         Vth[0, 1] = 10.0853
         Vth[0, 2] = 10.025
+        ss[0, 0] = -0.0800555
+        ss[0, 1] = -0.0539751
+        ss[0, 2] = -0.0934905
         sweep_name = "ngd"
     else:
         sweep_label[0] = "Channel length = 15 um"
@@ -166,6 +176,9 @@ def plot_transfer(root, transferNeg, transferPos, name):
         Vth[0, 0] = 10.0271
         Vth[0, 1] = 10.0399
         Vth[0, 2] = 10.0463
+        ss[0, 0] = -0.0807894
+        ss[0, 1] = -0.0674847
+        ss[0, 2] = -0.0773198
         sweep_name = "Channel length"
 
     Vg = np.zeros((160, 3), dtype = np.float)
@@ -239,6 +252,20 @@ def plot_transfer(root, transferNeg, transferPos, name):
     plt.xticks(fontproperties = 'Times New Roman', size = 14)
     # plt.legend(loc = 2, prop={'family':'Times New Roman', 'size':12})
     plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_2/Plots/' + 'Fig3_' + name + '.png')
+    plt.show()
+
+    plt.figure(4, figsize = (10, 8))
+    plt.plot (sweep[0, :], ss[0, :], linewidth = 2)
+    ax = plt.gca()
+    ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
+    ax.set_xscale("log")
+    plt.title('Subthreshold swing for sweep of ' + name, fontdict={'family':'Times New Roman', 'size':16})
+    plt.xlabel(sweep_name, fontdict={'family':'Times New Roman', 'size':16})
+    plt.ylabel('Subthreshold swing (V/decade)', fontdict={'family':'Times New Roman', 'size': 16})
+    plt.yticks(fontproperties = 'Times New Roman', size = 14)
+    plt.xticks(fontproperties = 'Times New Roman', size = 14)
+    # plt.legend(loc = 2, prop={'family':'Times New Roman', 'size':12})
+    plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_2/Plots/' + 'Fig4_' + name + '.png')
     plt.show()
 
 
