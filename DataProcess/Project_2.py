@@ -36,9 +36,9 @@ def main():
     transferNeg_4 = list(filter(lambda x: x[14 : 17]=='Neg', files_4))
     transferPos_4 = list(filter(lambda x: x[14 : 17]=='Pos', files_4))
 
-    # plot_trap_1(root_1, trap_int, name_1)
-    # plot_trap_2(root_2, trap_bulk_acc, trap_bulk_don, name_2)
-    # plot_trap_3(root_3, trap_bulk, trap_bulk_don, name_3)
+    plot_trap_1(root_1, trap_int, name_1)
+    plot_trap_2(root_2, trap_bulk_acc, trap_bulk_don, name_2)
+    plot_trap_2(root_3, trap_bulk_acc, trap_bulk_don, name_3)
 
     plot_transfer(root_1, transferNeg_1, transferPos_1, name_1)
     plot_transfer(root_2, transferNeg_2, transferPos_2, name_2)
@@ -49,7 +49,7 @@ def main():
 def plot_trap_1(root, files, name):
 
     sweep_label = ['nta = 0.5e12', 'nta = 2e12', 'nta = 8e12']
-    pos = np.zeros((24, 3), dtype = float)
+    energy = np.zeros((24, 3), dtype = float)
     trap = np.zeros((24, 3), dtype = float)
 
     for file in files:
@@ -59,14 +59,15 @@ def plot_trap_1(root, files, name):
         s = np.size(tmp)
         i = 0
         while i < s:
-            pos[i, num - 1] = float(tmp[i][0][4 : 16])
+            energy[i, num - 1] = float(tmp[i][0][4 : 16])
             trap[i, num - 1] = float(tmp[i][0][46 : 48])
             i = i + 1
 
+    ## Plot trap density for interface sweep
     plt.figure(5, figsize = (10, 8))
     i = 0
     while i < 3:
-        plt.plot (pos[:, i], trap[:, i], linewidth = 2, label = sweep_label[i])
+        plt.plot (energy[:, i], trap[:, i], linewidth = 2, label = sweep_label[i])
         i = i + 1
     ax = plt.gca()
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
@@ -84,30 +85,47 @@ def plot_trap_1(root, files, name):
 def plot_trap_2(root, files_acc, files_don, name):
 
     sweep_label = ['nta = 0.5e12', 'nta = 2e12', 'nta = 8e12']
-    pos = np.zeros((24, 3), dtype = float)
-    trap = np.zeros((24, 3), dtype = float)
+    energy = np.zeros((64, 3), dtype = float)
+    trap_acc = np.zeros((64, 3), dtype = float)
+    trap_don = np.zeros((64, 3), dtype = float)
+    trap = np.zeros((64, 3), dtype = float)
 
-    for file in files_acc:
-        num = int(file[-5])
-        tmp = pd.read_table(root + '/' + file, header = None, skiprows = 17)
-        tmp = np.array(tmp)
-        s = np.size(tmp)
+    for file_d in files_don:
+        num = int(file_d[-5])
+        file_a = 'a'
+        for file_tmp in files_acc:
+            if int(file_tmp[-5]) == num:
+                file_a = file_tmp
+        tmp_d = pd.read_table(root + '/' + file_d, header = None, skiprows = 17)
+        tmp_d = np.array(tmp_d)
+        tmp_a = pd.read_table(root + '/' + file_a, header = None, skiprows = 17)
+        tmp_a = np.array(tmp_a)
+        s_d = np.size(tmp_d)
+        s_a = np.size(tmp_a)
+        # print(s_d)
         i = 0
-        while i < s:
-            pos[i, num - 1] = float(tmp[i][0][4 : 16])
-            trap[i, num - 1] = float(tmp[i][0][18 : 30])
+        j = 0
+        while i < s_d:
+            energy[i, num - 1] = float(tmp_d[i][0][4 : 16])
+            trap_don[i, num - 1] = float(tmp_d[i][0][18 : 30])
+            while j < s_a:
+                if tmp_a[j][0][4 : 16] == tmp_d[i][0][4 : 16]:
+                    trap_acc[i, num - 1] = float(tmp_a[i][0][18 : 30])
+                j = j + 1
+            trap[i, num - 1] = trap_acc[i, num - 1] + trap_don[i, num - 1]
             i = i + 1
 
+    ## Plot trap density for bulkdeep & bulkshallow sweep
     plt.figure(5, figsize = (10, 8))
     i = 0
     while i < 3:
-        plt.plot (pos[:, i], trap[:, i], linewidth = 2, label = sweep_label[i])
+        plt.plot (energy[:, i], trap[:, i], linewidth = 2, label = sweep_label[i])
         i = i + 1
     ax = plt.gca()
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
     ax.set_yscale("log")
     plt.title('Trap density for sweep of ' + name, fontdict={'family':'Times New Roman', 'size':16})
-    plt.xlabel('Position (um)', fontdict={'family':'Times New Roman', 'size':16})
+    plt.xlabel('State energy (eV)', fontdict={'family':'Times New Roman', 'size':16})
     plt.ylabel('Trap density (cm^-3)', fontdict={'family':'Times New Roman', 'size': 16})
     plt.yticks(fontproperties = 'Times New Roman', size = 14)
     plt.xticks(fontproperties = 'Times New Roman', size = 14)
@@ -204,6 +222,7 @@ def plot_transfer(root, transferNeg, transferPos, name):
         Vg[60 :, num - 1] = tmp[:, 0]
         Id[60 :, num - 1] = tmp[:, 8]
 
+    ## Plot transfer curve, linear scale
     plt.figure(1, figsize = (10, 8))
     i = 0
     while i < 3:
@@ -222,6 +241,7 @@ def plot_transfer(root, transferNeg, transferPos, name):
     plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_2/Plots/' + 'Fig1_' + name + '.png')
     plt.show()
 
+    ## Plot transfer curve, log scale
     plt.figure(2, figsize = (10, 8))
     i = 0
     while i < 3:
@@ -240,6 +260,7 @@ def plot_transfer(root, transferNeg, transferPos, name):
     plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_2/Plots/' + 'Fig2_' + name + '.png')
     plt.show()
 
+    ## Plot threshold voltage
     plt.figure(3, figsize = (10, 8))
     plt.plot (sweep[0, :], Vth[0, :], linewidth = 2)
     ax = plt.gca()
@@ -254,6 +275,7 @@ def plot_transfer(root, transferNeg, transferPos, name):
     plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_2/Plots/' + 'Fig3_' + name + '.png')
     plt.show()
 
+    ## Plot subthreshold swing
     plt.figure(4, figsize = (10, 8))
     plt.plot (sweep[0, :], ss[0, :], linewidth = 2)
     ax = plt.gca()
