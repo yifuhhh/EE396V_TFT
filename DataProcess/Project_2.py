@@ -24,28 +24,32 @@ def main():
     files_2 = os.listdir(root_2)
     transferNeg_2 = list(filter(lambda x: x[14 : 17]=='Neg', files_2))
     transferPos_2 = list(filter(lambda x: x[14 : 17]=='Pos', files_2))
+    trap_bulk = list(filter(lambda x: x[0 : 4]=='bulk', files_2))
 
     files_3 = os.listdir(root_3)
     transferNeg_3 = list(filter(lambda x: x[14 : 17]=='Neg', files_3))
     transferPos_3 = list(filter(lambda x: x[14 : 17]=='Pos', files_3))
+    trap_bulk_acc = list(filter(lambda x: x[0 : 8]=='bulk_acc', files_3))
+    trap_bulk_don = list(filter(lambda x: x[0 : 8]=='bulk_don', files_3))
 
     files_4 = os.listdir(root_4)
     transferNeg_4 = list(filter(lambda x: x[14 : 17]=='Neg', files_4))
     transferPos_4 = list(filter(lambda x: x[14 : 17]=='Pos', files_4))
 
-    plot_trap_1(root_1, trap_int, name_1)
+    # plot_trap_1(root_1, trap_int, name_1)
+    plot_trap_2(root_2, trap_bulk_acc, trap_bulk_don, name_2)
+    # plot_trap_3(root_3, trap_bulk, trap_bulk_don, name_3)
 
     # plot_transfer(root_1, transferNeg_1, transferPos_1, name_1)
     # plot_transfer(root_2, transferNeg_2, transferPos_2, name_2)
     # plot_transfer(root_3, transferNeg_3, transferPos_3, name_3)
     # plot_transfer(root_4, transferNeg_4, transferPos_4, name_4)
 
-    # c = pd.read_table(file_1, header = None, skiprows = 17)
 
 def plot_trap_1(root, files, name):
 
     sweep_label = ['nta = 0.5e12', 'nta = 2e12', 'nta = 8e12']
-    X = np.zeros((24, 3), dtype = float)
+    pos = np.zeros((24, 3), dtype = float)
     trap = np.zeros((24, 3), dtype = float)
 
     for file in files:
@@ -55,14 +59,49 @@ def plot_trap_1(root, files, name):
         s = np.size(tmp)
         i = 0
         while i < s:
-            X[i, num - 1] = float(tmp[i][0][4 : 16])
+            pos[i, num - 1] = float(tmp[i][0][4 : 16])
             trap[i, num - 1] = float(tmp[i][0][18 : 30])
             i = i + 1
 
     plt.figure(5, figsize = (10, 8))
     i = 0
     while i < 3:
-        plt.plot (X[:, i], trap[:, i], linewidth = 2, label = sweep_label[i])
+        plt.plot (pos[:, i], trap[:, i], linewidth = 2, label = sweep_label[i])
+        i = i + 1
+    ax = plt.gca()
+    ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
+    ax.set_yscale("log")
+    plt.title('Trap density for sweep of ' + name, fontdict={'family':'Times New Roman', 'size':16})
+    plt.xlabel('Position (um)', fontdict={'family':'Times New Roman', 'size':16})
+    plt.ylabel('Trap density (cm^-3)', fontdict={'family':'Times New Roman', 'size': 16})
+    plt.yticks(fontproperties = 'Times New Roman', size = 14)
+    plt.xticks(fontproperties = 'Times New Roman', size = 14)
+    plt.legend(loc = 1, prop={'family':'Times New Roman', 'size':12})
+    plt.savefig('/Users/yifuhhh/TFT_Projects/Prj_2/Plots/' + 'Fig0_' + name + '.png')
+    plt.show()
+
+
+def plot_trap_2(root, files_acc, files_don, name):
+
+    sweep_label = ['nta = 0.5e12', 'nta = 2e12', 'nta = 8e12']
+    pos = np.zeros((24, 3), dtype = float)
+    trap = np.zeros((24, 3), dtype = float)
+
+    for file in files_acc:
+        num = int(file[-5])
+        tmp = pd.read_table(root + '/' + file, header = None, skiprows = 17)
+        tmp = np.array(tmp)
+        s = np.size(tmp)
+        i = 0
+        while i < s:
+            pos[i, num - 1] = float(tmp[i][0][4 : 16])
+            trap[i, num - 1] = float(tmp[i][0][18 : 30])
+            i = i + 1
+
+    plt.figure(5, figsize = (10, 8))
+    i = 0
+    while i < 3:
+        plt.plot (pos[:, i], trap[:, i], linewidth = 2, label = sweep_label[i])
         i = i + 1
     ax = plt.gca()
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
