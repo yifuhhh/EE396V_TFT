@@ -40,10 +40,10 @@ def main():
     plot_trap_2(root_2, trap_bulk_acc, trap_bulk_don, name_2)
     plot_trap_2(root_3, trap_bulk_acc, trap_bulk_don, name_3)
 
-    plot_transfer(root_1, transferNeg_1, transferPos_1, name_1)
-    plot_transfer(root_2, transferNeg_2, transferPos_2, name_2)
-    plot_transfer(root_3, transferNeg_3, transferPos_3, name_3)
-    plot_transfer(root_4, transferNeg_4, transferPos_4, name_4)
+    # plot_transfer(root_1, transferNeg_1, transferPos_1, name_1)
+    # plot_transfer(root_2, transferNeg_2, transferPos_2, name_2)
+    # plot_transfer(root_3, transferNeg_3, transferPos_3, name_3)
+    # plot_transfer(root_4, transferNeg_4, transferPos_4, name_4)
 
 
 def plot_trap_1(root, files, name):
@@ -60,7 +60,7 @@ def plot_trap_1(root, files, name):
         i = 0
         while i < s:
             energy[i, num - 1] = float(tmp[i][0][4 : 16])
-            trap[i, num - 1] = float(tmp[i][0][46 : 48])
+            trap[i, num - 1] = float(tmp[i][0][46 : 58])
             i = i + 1
 
     ## Plot trap density for interface sweep
@@ -107,13 +107,14 @@ def plot_trap_2(root, files_acc, files_don, name):
         j = 0
         while i < s_d:
             energy[i, num - 1] = float(tmp_d[i][0][4 : 16])
-            trap_don[i, num - 1] = float(tmp_d[i][0][18 : 30])
+            trap_don[i, num - 1] = float(tmp_d[i][0][46 : 58])
             while j < s_a:
                 if tmp_a[j][0][4 : 16] == tmp_d[i][0][4 : 16]:
-                    trap_acc[i, num - 1] = float(tmp_a[i][0][18 : 30])
+                    trap_acc[i, num - 1] = float(tmp_a[i][0][46 : 58])
                 j = j + 1
             trap[i, num - 1] = trap_acc[i, num - 1] + trap_don[i, num - 1]
             i = i + 1
+    print(trap_don)
 
     ## Plot trap density for bulkdeep & bulkshallow sweep
     plt.figure(5, figsize = (10, 8))
