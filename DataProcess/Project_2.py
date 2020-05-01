@@ -40,10 +40,10 @@ def main():
     plot_trap_2(root_2, trap_bulk_acc, trap_bulk_don, name_2)
     plot_trap_2(root_3, trap_bulk_acc, trap_bulk_don, name_3)
 
-    # plot_transfer(root_1, transferNeg_1, transferPos_1, name_1)
-    # plot_transfer(root_2, transferNeg_2, transferPos_2, name_2)
-    # plot_transfer(root_3, transferNeg_3, transferPos_3, name_3)
-    # plot_transfer(root_4, transferNeg_4, transferPos_4, name_4)
+    plot_transfer(root_1, transferNeg_1, transferPos_1, name_1)
+    plot_transfer(root_2, transferNeg_2, transferPos_2, name_2)
+    plot_transfer(root_3, transferNeg_3, transferPos_3, name_3)
+    plot_transfer(root_4, transferNeg_4, transferPos_4, name_4)
 
 
 def plot_trap_1(root, files, name):
@@ -73,7 +73,7 @@ def plot_trap_1(root, files, name):
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
     ax.set_yscale("log")
     plt.title('Trap density for sweep of ' + name, fontdict={'family':'Times New Roman', 'size':16})
-    plt.xlabel('State energy (eV)', fontdict={'family':'Times New Roman', 'size':16})
+    plt.xlabel('State energy from Ec (eV)', fontdict={'family':'Times New Roman', 'size':16})
     plt.ylabel('Trap density (cm^-3)', fontdict={'family':'Times New Roman', 'size': 16})
     plt.yticks(fontproperties = 'Times New Roman', size = 14)
     plt.xticks(fontproperties = 'Times New Roman', size = 14)
@@ -104,17 +104,22 @@ def plot_trap_2(root, files_acc, files_don, name):
         s_a = np.size(tmp_a)
         # print(s_d)
         i = 0
-        j = 0
         while i < s_d:
             energy[i, num - 1] = float(tmp_d[i][0][4 : 16])
             trap_don[i, num - 1] = float(tmp_d[i][0][46 : 58])
+            j = 0
             while j < s_a:
                 if tmp_a[j][0][4 : 16] == tmp_d[i][0][4 : 16]:
-                    trap_acc[i, num - 1] = float(tmp_a[i][0][46 : 58])
+                    trap_acc[s_d - i - 1, num - 1] = float(tmp_a[j][0][46 : 58])
                 j = j + 1
+            i = i + 1
+        i = 0
+        while i < s_d:
             trap[i, num - 1] = trap_acc[i, num - 1] + trap_don[i, num - 1]
             i = i + 1
+
     print(trap_don)
+    print(trap_acc)
 
     ## Plot trap density for bulkdeep & bulkshallow sweep
     plt.figure(5, figsize = (10, 8))
@@ -126,7 +131,7 @@ def plot_trap_2(root, files_acc, files_don, name):
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
     ax.set_yscale("log")
     plt.title('Trap density for sweep of ' + name, fontdict={'family':'Times New Roman', 'size':16})
-    plt.xlabel('State energy (eV)', fontdict={'family':'Times New Roman', 'size':16})
+    plt.xlabel('State energy from Ev (eV)', fontdict={'family':'Times New Roman', 'size':16})
     plt.ylabel('Trap density (cm^-3)', fontdict={'family':'Times New Roman', 'size': 16})
     plt.yticks(fontproperties = 'Times New Roman', size = 14)
     plt.xticks(fontproperties = 'Times New Roman', size = 14)
