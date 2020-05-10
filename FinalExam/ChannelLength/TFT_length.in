@@ -1,3 +1,7 @@
+loop steps=5
+assign name=index print n.value = 1 delta = 1
+assign name=infF print n.value=(12.5,25,37.5,50,62.5)
+
 ####################################
 ### TRANSFER CURVE OF a-IGZO TFT ###
 ####################################
@@ -5,7 +9,7 @@
 go atlas 
 
 ### Local variables
-set ch_L=50
+set ch_L=${infF}
 set spacing=100
 
 ### Set up Mesh and Geometry
@@ -55,9 +59,9 @@ defects nta=1.55e21 ntd=1.55e21 wta=0.013 wtd=0.12 \
 	nga=0.0 ngd=6.5e18 egd=2.0 wgd=0.1 \
 	sigtae=1e-15 sigtah=1e-15 sigtde=1e-15 sigtdh=1e-15 \
 	siggae=1e-15 siggah=1e-15 siggde=1e-15 siggdh=1e-15 \
-	dfile=bulk_don.dat afile=bulk_acc.dat numa=64 numd=64
+	dfile=bulk_don_${index}.dat afile=bulk_acc_${index}.dat numa=64 numd=64
 
-intdefect s.i intmaterial="igzo/sio2" continuous tfile=int_both.dat numa=24 numd=24  \
+intdefect s.i intmaterial="igzo/sio2" continuous tfile=int_both_${index}.dat numa=24 numd=24  \
   nta=2e13 ntd=4e16 wta=0.19 wtd=0.1 \
   nga=0 ngd=0 ega=0.62 egd=0.78 wga=0.15 wgd=0.15 \
   sigtae=1.e-14 sigtah=1.e-14 sigtde=1.e-14 sigtdh=1.e-14 \  
@@ -70,14 +74,14 @@ solve prev
 solve vdrain=0.1
 solve vdrain=4
 solve vdrain=10
-save outf=transfer_10.str
-log outf=transfer_10_neg.log csvfile=transfer_10_neg.csv
+save outf=transfer_0_${index}.str
+log outf=transfer_L_Neg_${index}.log csvfile=transfer_L_Neg_${index}.csv
 solve vgate=0 vstep=-0.2 vfinal=-10 name=gate
 log off
 
-load inf=transfer_10.str master
+load inf=transfer_0_${index}.str master
 solve prev
-log outf=transfer_10_pos.log csvfile=transfer_10_pos.csv
+log outf=transfer_L_Pos_${index}.log csvfile=transfer_L_Pos_${index}.csv
 solve vstep=0.2 vfinal=20.0 name=gate
 log off
 
@@ -86,16 +90,42 @@ solve prev
 solve vgate=0.1
 solve vgate=5
 solve vgate=10
-log outf=output.log csvfile=output.csv
+log outf=output_${index}.log csvfile=output_${index}.csv
 solve vstep=0.2 vfinal=15.0 name=drain
 log off
 
-tonyplot -overlay transfer_10_neg.log transfer_10_pos.log
+l.end
+
+tonyplot -overlay transfer_L_Neg_1.log transfer_L_Pos_1.log transfer_L_Neg_2.log transfer_L_Pos_2.log transfer_L_Neg_3.log transfer_L_Pos_3.log transfer_L_Neg_4.log transfer_L_Pos_4.log transfer_L_Neg_5.log transfer_L_Pos_5.log
+
 tonyplot output.log 
-tonyplot -overlay bulk_don.dat bulk_acc.dat
-tonyplot int_both.dat
-tonyplot transfer_10.str
+tonyplot -overlay bulk_don_1.dat bulk_acc_1.dat bulk_don_2.dat bulk_acc_2.dat bulk_don_3.dat bulk_acc_3.dat bulk_don_4.dat bulk_acc_4.dat bulk_don_5.dat bulk_acc_5.dat 
+tonyplot -overlay int_both_1.dat int_both_2.dat int_both_3.dat int_both_4.dat int_both_5.dat 
+tonyplot -overlay transfer_0_1.str transfer_0_2.str transfer_0_3.str transfer_0_4.str transfer_0_5.str 
 
+extract init infile="transfer_L_Pos_1.log"
+extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0) 
+extract init infile="transfer_L_Neg_1.log"
+extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
 
+extract init infile="transfer_L_Pos_2.log"
+extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0) 
+extract init infile="transfer_L_Neg_2.log"
+extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
+
+extract init infile="transfer_L_Pos_3.log"
+extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0) 
+extract init infile="transfer_L_Neg_3.log"
+extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
+
+extract init infile="transfer_L_Pos_4.log"
+extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0) 
+extract init infile="transfer_L_Neg_4.log"
+extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
+
+extract init infile="transfer_L_Pos_5.log"
+extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0) 
+extract init infile="transfer_L_Neg_5.log"
+extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
 
 quit
