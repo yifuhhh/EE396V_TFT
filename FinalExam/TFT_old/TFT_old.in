@@ -96,6 +96,9 @@ tonyplot -overlay bulk_don.dat bulk_acc.dat
 tonyplot int_both.dat
 tonyplot transfer_10.str
 
-
+extract init infile="transfer_10_pos.log"
+extract name="vt" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0) 
+extract init infile="transfer_10_neg.log"
+extract name="subvt" 1/slope(minslope(curve(abs(v."gate"),log10(abs(i."drain")),x.min=0 x.max=1.2)))
 
 quit
