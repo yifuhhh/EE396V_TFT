@@ -67,7 +67,7 @@ def main():
 
     W = 20e-4 # cm
     L = 1e-4 # cm
-    Vds = 10
+    Vgs = 10
     t = 90e-7 # cm
     epilson = 25
     epilson0 = 8.85e-14 # F/cm
@@ -78,7 +78,7 @@ def main():
     u_on = (2 * Id[s - 1, 0] * L) / (W * Cg * (Vg[s - 1, 0] - Von) * (Vg[s - 1, 0] - Von))
     u_Vth = (2 * Id[s - 1, 0] * L) / (W * Cg * (Vg[s - 1, 0] - Vth) * (Vg[s - 1, 0] - Vth))
     N = (((SS * q)/(k * T * math.log(10)) - 1) * Cg * q) / (q * q)
-    v = u_on * Vds / L
+    v = u_on * Vgs / L
 
     print("u_on = " + str(u_on))
     print("u_Vth = " + str(u_Vth))
