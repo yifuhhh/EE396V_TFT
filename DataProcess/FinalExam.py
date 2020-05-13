@@ -9,6 +9,7 @@ def main():
     root_2 = "/Users/yifuhhh/TFT_Projects/FinalExam/Data/ChannelHeight"
     root_3 = "/Users/yifuhhh/TFT_Projects/FinalExam/Data/ChannelLength"
     root_4 = "/Users/yifuhhh/TFT_Projects/FinalExam/Data/DielectricThickness"
+    root_5 = "/Users/yifuhhh/TFT_Projects/FinalExam/Data/BestDesign"
 
     # name_1 = "TFT_old"
     # name_2 = "Height"
@@ -31,10 +32,15 @@ def main():
     transferNeg_4 = list(filter(lambda x: x[13 : 16]=='Neg', files_4))
     transferPos_4 = list(filter(lambda x: x[13 : 16]=='Pos', files_4))
 
-    # solve_1(root_1, transferNeg_1, transferPos_1)
-    # solve_2(root_2, transferNeg_2, transferPos_2)
+    files_5 = os.listdir(root_1)
+    transferNeg_5 = "transfer_10_Neg.csv"
+    transferPos_5 = "transfer_10_Pos.csv"
+
+    solve_1(root_1, transferNeg_1, transferPos_1)
+    solve_2(root_2, transferNeg_2, transferPos_2)
     solve_3(root_3, transferNeg_3, transferPos_3)
-    # solve_4(root_4, transferNeg_4, transferPos_4)
+    solve_4(root_4, transferNeg_4, transferPos_4)
+    solve_1(root_5, transferNeg_5, transferPos_5)
 
 
 def solve_1(root, file_Neg, file_Pos):
@@ -73,7 +79,7 @@ def solve_1(root, file_Neg, file_Pos):
     plt.ylabel('Id (A)', fontdict={'family':'Times New Roman', 'size': 16})
     plt.yticks(fontproperties = 'Times New Roman', size = 14)
     plt.xticks(fontproperties = 'Times New Roman', size = 14)
-    # plt.savefig('/Users/yifuhhh/TFT_Projects/FinalExam/PartA/Fig7_1a.png')
+    plt.savefig('/Users/yifuhhh/TFT_Projects/FinalExam/Plots/Fig0_transfer.png')
     plt.show()
 
     plt.figure(2, figsize = (10, 8))
@@ -90,9 +96,9 @@ def solve_1(root, file_Neg, file_Pos):
     # plt.savefig('/Users/yifuhhh/TFT_Projects/FinalExam/PartA/Fig7_1b_2.png')
     plt.show()
 
-    L = 50e-6 # m
-    H = 200e-9 # m
-    t = 200e-9 # m
+    L = 12.5e-6 # m
+    H = 80e-9 # m
+    t = 100e-9 # m
 
     SS = solve_SS(Id_log, Vg, s)
     (J, u_FE) = solve_param(Id, Vg, s, L, H, t)
